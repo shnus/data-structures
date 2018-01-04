@@ -1,12 +1,14 @@
 package seminar1.iterators;
 
+import java.util.NoSuchElementException;
+
 public class PeekingIncreasingIterator extends IncreasingIterator implements IPeekingIterator<Integer> {
 
     private boolean hasPeeked;
     private Integer peekedElement;
 
-    public PeekingIncreasingIterator(int start, int maxGrowth, int stepLimit) {
-        super(start, maxGrowth, stepLimit);
+    public PeekingIncreasingIterator(int startValue, int maxValue, int stepLimit, int maxStepGrowth) {
+        super(startValue, maxValue, stepLimit, maxStepGrowth);
     }
 
     @Override
@@ -16,21 +18,35 @@ public class PeekingIncreasingIterator extends IncreasingIterator implements IPe
 
     @Override
     public Integer next() {
-        if (!hasPeeked) {
+        checkHasNext();
+        if (hasPeeked) {
+            hasPeeked = false;
+            return peekedElement;
+        } else {
             return super.next();
         }
-        Integer result = peekedElement;
-        hasPeeked = false;
-        peekedElement = null; //for GC
-        return result;
     }
 
     @Override
     public Integer peek() {
         if (!hasPeeked) {
+            checkHasNext();
             peekedElement = super.next();
             hasPeeked = true;
         }
         return peekedElement;
+    }
+
+    @Override
+    public int compareTo(IPeekingIterator<Integer> other) {
+        if (this.hasNext() && other.hasNext()) {
+            return Integer.compare(this.peek(), other.peek());
+        } else if (!this.hasNext() && !other.hasNext()) {
+            return 0;
+        } else if (this.hasNext()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }

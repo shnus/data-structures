@@ -1,6 +1,8 @@
 package seminar1.iterators;
 
+import java.time.temporal.ValueRange;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -8,39 +10,60 @@ import java.util.Random;
  */
 public class IncreasingIterator implements Iterator<Integer> {
 
-    protected static char nextName = 'A';
-
-    protected int curr;
-    protected int step;
-    protected final Random random;
-    protected final String name;
-    protected final int maxGrowth;
-    protected final int valueLimit;
+    protected final int maxStepGrowth;
     protected final int stepLimit;
+    protected final Random random;
+    protected final ValueRange iteratorRange;
 
-    public IncreasingIterator(int start, int maxGrowth, int stepLimit) {
-        this.curr = start;
-        this.maxGrowth = maxGrowth + 1; //because in random.nextInt(upperBound) — upperBound is exclusive
-        this.name = nextName++ + "-";
-        this.valueLimit = Integer.MAX_VALUE - maxGrowth;
-        this.stepLimit = stepLimit == 0 ? Integer.MAX_VALUE : stepLimit;
+    protected int currentStep;
+    protected int currentValue;
+    protected int nextValue;
+
+    public IncreasingIterator(int startValue, int maxValue, int stepLimit, int maxStepGrowth) {
+        if (startValue < 0) {
+            throw new IllegalArgumentException("startValue should greater than or equal to zero");
+        }
+        if (maxStepGrowth < 0) {
+            throw new IllegalArgumentException("maxStepGrowth should be positive");
+        }
+        if (maxValue < startValue) {
+            throw new IllegalArgumentException("maxValue should be greater then start = " + startValue);
+        }
+        if (stepLimit < 1) {
+            throw new IllegalArgumentException("stepLimit should be positive");
+        }
+        this.maxStepGrowth = maxStepGrowth + 1; //because in random.nextInt(upperBound) — upperBound is exclusive
+        this.stepLimit = stepLimit;
         this.random = new Random();
+        this.iteratorRange = ValueRange.of(startValue, maxValue);
+
+        this.currentStep = 0;
+        this.currentValue = startValue;
+        this.nextValue = generateNextValue();
     }
 
     @Override
     public boolean hasNext() {
-        return curr < valueLimit && step < stepLimit;
+        return iteratorRange.isValidValue(nextValue) && currentStep < stepLimit;
     }
 
     @Override
     public Integer next() {
-        int prev = curr;
-        curr += random.nextInt(maxGrowth);
-        step++;
-        return prev;
+        checkHasNext();
+        int curr = currentValue;
+        currentValue = nextValue;
+        nextValue = generateNextValue();
+        currentStep++;
+        return curr;
     }
 
-    public String getName() {
-        return name;
+    private int generateNextValue() {
+        return currentValue + random.nextInt(maxStepGrowth);
+    }
+
+    protected void checkHasNext() throws NoSuchElementException {
+        if (!hasNext()) {
+            throw new NoSuchElementException("currentValue = " + currentValue + ", currentStep = " + currentStep);
+        }
     }
 }
