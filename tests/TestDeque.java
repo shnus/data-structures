@@ -13,7 +13,9 @@ import seminar1.collections.IDeque;
 import seminar1.collections.LinkedDeque;
 
 /**
- * Класс тестирующий интерфейс IDeque в двух разных реализациях: на массиве и на списке
+ * Класс тестирующий интерфейс {@link IDeque<Integer>} в двух реализациях:
+ * 1) на массиве {@link CyclicArrayDeque<Integer>}
+ * 2) на списке {@link LinkedDeque<Integer>}
  */
 @RunWith(value = Parameterized.class)
 public class TestDeque {
