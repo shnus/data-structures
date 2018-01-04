@@ -1,7 +1,5 @@
 package seminar1.iterators;
 
-import java.util.NoSuchElementException;
-
 public class PeekingIncreasingIterator extends IncreasingIterator implements IPeekingIterator<Integer> {
 
     private boolean hasPeeked;
