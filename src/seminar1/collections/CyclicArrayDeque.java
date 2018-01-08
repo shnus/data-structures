@@ -75,6 +75,7 @@ public class CyclicArrayDeque<Item> implements IDeque<Item> {
         return item;
     }
 
+
     @Override
     public Item popBack() {
         if (size() < 1) {
@@ -100,7 +101,9 @@ public class CyclicArrayDeque<Item> implements IDeque<Item> {
         }
     }
 
-    //Invoke only when u push element
+    /*
+    Invoke only after pushing element
+     */
     public boolean isCloseToFull() {
         int difference = back - front;
         if (difference == -1 || difference == capacity - 1) {
@@ -112,6 +115,10 @@ public class CyclicArrayDeque<Item> implements IDeque<Item> {
 
     @Override
     public int size() {
+        return size(front, back);
+    }
+
+    private int size(int front, int back){
         if (isEmpty()) {
             return 0;
         }
@@ -160,7 +167,31 @@ public class CyclicArrayDeque<Item> implements IDeque<Item> {
 
     @Override
     public Iterator<Item> iterator() {
-        /* TODO: implement it */
-        return null;
+        return new CyclicArrayIterator();
+    }
+
+    private class CyclicArrayIterator implements Iterator{
+
+        private int fakeFront = front;
+        @Override
+        public boolean hasNext() {
+            if(size(fakeFront, back)<1) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        public Item next() {
+            if(hasNext()) {
+                fakeFront = (fakeFront + 1) % capacity;
+                Item item = elementData[fakeFront];
+
+                return item;
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
     }
 }
