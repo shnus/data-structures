@@ -7,6 +7,7 @@ import seminar1.collections.CyclicArrayDeque;
 import seminar1.collections.IDeque;
 import seminar1.collections.LinkedDeque;
 
+import javax.swing.text.html.HTMLDocument;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -201,6 +202,82 @@ public class TestDeque {
         }
     }
 
+    /*
+    Check that empty deques iterator give false hasNext.
+     */
+    @Test
+    public void iteratorHasNextEmpty(){
+        Assert.assertEquals(false, deque.iterator().hasNext());
+    }
+
+    /*
+    Check that non empty deques iterator give true hasNext.
+     */
+    @Test
+    public void iteratorHasNextNonEmpty(){
+        deque.pushBack(1);
+        Assert.assertEquals(true, deque.iterator().hasNext());
+    }
+
+    /*
+    Check that empty deques iterator throw exception on next method.
+     */
+    @Test(expected = NoSuchElementException.class)
+    public void iteratorNextEmpty(){
+        deque.iterator().next();
+    }
+
+
+    @Test
+    public void iteratorNextNonEmpty(){
+        deque.pushBack(1);
+        Iterator iterator = deque.iterator();
+        Assert.assertEquals(true, iterator.hasNext());
+        Assert.assertEquals(true, iterator.hasNext());
+        Assert.assertEquals(Integer.valueOf(1), deque.popBack());
+        Assert.assertEquals(false, iterator.hasNext());
+        Assert.assertEquals(false, iterator.hasNext());
+
+    }
+
+    /*
+    Check that deque size == iterator elements count.
+     */
+    @Test
+    public void iteratorNextNonEmpty2(){
+        int count = 1000;
+        randomDequePushing(deque,count);
+        Iterator iterator = deque.iterator();
+        for(int i = 0; i < count; i++){
+            Assert.assertEquals(true, iterator.hasNext());
+            iterator.next();
+        }
+        Assert.assertEquals(false, iterator.hasNext());
+        Assert.assertEquals(false, iterator.hasNext());
+    }
+
+    /*
+    Simple real using iterator test. Checking iterator 'size' and next returning elements.
+     */
+    @Test
+    public void iteratorImitation(){
+        list = new LinkedList<>();
+        int count = 10000;
+        for (int i = 0; i < count; i++) {
+            list.addLast(i);
+            deque.pushBack(i);
+        }
+        Iterator iterator = deque.iterator();
+        Iterator testIterator = list.iterator();
+        for(int i = 0; i < count; i++){
+            Assert.assertEquals(testIterator.hasNext(), iterator.hasNext());
+            Assert.assertEquals(testIterator.next(), iterator.next());
+        }
+        Assert.assertEquals(testIterator.hasNext(), iterator.hasNext());
+        Assert.assertEquals(testIterator.hasNext(), iterator.hasNext());
+    }
+
+    
 
     private void randomDequePushing(IDeque deque, int count) {
         Random random = new Random();
