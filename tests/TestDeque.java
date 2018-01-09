@@ -43,11 +43,24 @@ public class TestDeque {
         }
     }
 
+    /*
+    Should throw exception if capacity < 0
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorParameterValidation() {
+        try {
+            deque = (IDeque<Integer>) testClass.getConstructor().newInstance(-1);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void isEmpty() {
         Assert.assertTrue(deque.isEmpty());
         Assert.assertEquals(deque.size(), 0);
     }
+
 
     /*
     Checking that pushing back works right. And it grows correctly,
@@ -96,7 +109,7 @@ public class TestDeque {
             deque.popFront();
             Assert.assertEquals(deque.size(), countPush - i - 1);
         }
-        Assert.assertEquals(deque.isEmpty(), true);
+        Assert.assertTrue(deque.isEmpty());
     }
 
     /*
@@ -125,7 +138,7 @@ public class TestDeque {
             deque.popBack();
             Assert.assertEquals(deque.size(), countPush - i - 1);
         }
-        Assert.assertEquals(deque.isEmpty(), true);
+        Assert.assertTrue(deque.isEmpty());
     }
 
     /*
@@ -207,7 +220,7 @@ public class TestDeque {
      */
     @Test
     public void iteratorHasNextEmpty(){
-        Assert.assertEquals(false, deque.iterator().hasNext());
+        Assert.assertFalse(deque.iterator().hasNext());
     }
 
     /*
@@ -216,7 +229,7 @@ public class TestDeque {
     @Test
     public void iteratorHasNextNonEmpty(){
         deque.pushBack(1);
-        Assert.assertEquals(true, deque.iterator().hasNext());
+        Assert.assertTrue(deque.iterator().hasNext());
     }
 
     /*
@@ -232,11 +245,11 @@ public class TestDeque {
     public void iteratorNextNonEmpty(){
         deque.pushBack(1);
         Iterator iterator = deque.iterator();
-        Assert.assertEquals(true, iterator.hasNext());
-        Assert.assertEquals(true, iterator.hasNext());
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(Integer.valueOf(1), deque.popBack());
-        Assert.assertEquals(false, iterator.hasNext());
-        Assert.assertEquals(false, iterator.hasNext());
+        Assert.assertFalse(iterator.hasNext());
+        Assert.assertFalse(iterator.hasNext());
 
     }
 
@@ -249,11 +262,27 @@ public class TestDeque {
         randomDequePushing(deque,count);
         Iterator iterator = deque.iterator();
         for(int i = 0; i < count; i++){
-            Assert.assertEquals(true, iterator.hasNext());
+            Assert.assertTrue(iterator.hasNext());
             iterator.next();
         }
-        Assert.assertEquals(false, iterator.hasNext());
-        Assert.assertEquals(false, iterator.hasNext());
+        Assert.assertFalse(iterator.hasNext());
+        Assert.assertFalse(iterator.hasNext());
+    }
+
+    /*
+    Foreach testing and size testing.
+     */
+    @Test
+    public void iteratorNextNonEmpty3(){
+        int count = 1000;
+        for(int i = 0; i < count; i++){
+            deque.pushBack(i);
+        }
+        int i = 0;
+        for(Integer value: deque){
+            i++;
+        }
+        Assert.assertEquals(i,count);
     }
 
     /*
@@ -277,7 +306,7 @@ public class TestDeque {
         Assert.assertEquals(testIterator.hasNext(), iterator.hasNext());
     }
 
-    
+
 
     private void randomDequePushing(IDeque deque, int count) {
         Random random = new Random();
